@@ -74,9 +74,7 @@ luarocks install cudnn
 
 To benefit from faster execution times, a fast optical flow estimator is required.
 
-There are sample scripts in our repository for either DeepFlow or FlowNet 2.0. DeepFlow is slower but comes as a standalone executable and is therefore very easy to install (just download the executable). Execution time will still be a lot faster than with our optimization-based approach.
-
-Faster execution times can only be reached with [FLowNet 2.0](https://github.com/lmb-freiburg/flownet2) which runs on a GPU as well, given you have a sufficient fast GPU. It was used for the experiments in paper.
+There are sample scripts in our repository for either DeepFlow or FlowNet 2.0. DeepFlow is slower but comes as a standalone executable and is therefore very easy to install (just download the executable). Execution time will still be a lot faster than with our optimization-based approach. Faster execution times can be reached with FlowNet 2.0 which runs on a GPU as well, given you have a sufficient fast GPU. It was used for the experiments in the paper.
 
 #### DeepFlow setup instructions
 
@@ -84,9 +82,7 @@ Just download both [DeepFlow](http://lear.inrialpes.fr/src/deepflow/) and [DeepM
 
 #### FlowNet 2.0 setup instructions
 
-Go to [flownet2 (GitHub)](https://github.com/lmb-freiburg/flownet2) and follow the instructions there on how to download, compile and use the source code and pretrained models. Since FlowNet is build upon Caffe, you may also want to read [Caffe | Installation](http://caffe.berkeleyvision.org/installation.html) for a list of dependencies (unfortunately, they are not listed in the flownet2 repository).
-
-There is also a Dockerfile for easy installation of the complete code in one step (requires Docker):
+Go to [flownet2 (GitHub)](https://github.com/lmb-freiburg/flownet2) and follow the instructions there on how to download, compile and use the source code and pretrained models. Since FlowNet is build upon Caffe, you may also want to read [Caffe | Installation](http://caffe.berkeleyvision.org/installation.html) for a list of dependencies (unfortunately, they are not listed in the flownet2 repository). There is also a Dockerfile for easy installation of the complete code in one step:
 [flownet2-docker (GitHub)](https://github.com/lmb-freiburg/flownet2-docker)
 
 Then, open `run-flownet-multiple.sh` and set the directory to the FlowNet files and models.
@@ -170,6 +166,10 @@ See the example scripts above for a preprocessing pipeline. Each cube face must 
 ## Training new models
 
 Not (yet) available.
+
+Contact
+
+For issues or questions related to this implementation, please use the [issue tracker](https://github.com/manuelruder/fast-artistic-videos/issues). For everything else, including licensing issues, please email us. Our contact details can be found in [our paper](https://arxiv.org/abs/1708.04538).
 
 ## License
 

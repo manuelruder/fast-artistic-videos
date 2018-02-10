@@ -1,12 +1,12 @@
-# fast-neural-style
+# fast-artistic-videos
 
 This is the source code for fast video style transfer described in
 
 **[Artistic style transfer for videos and spherical images](https://arxiv.org/abs/1708.04538)**
 <br>
-[Manuel Ruder](...),
-[Alexey Dosovitskiy](...),
-[Thomas Brox](...)
+Manuel Ruder,
+Alexey Dosovitskiy,
+[Thomas Brox](https://lmb.informatik.uni-freiburg.de/people/brox/)
 <br>
 
 The paper builds on

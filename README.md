@@ -28,7 +28,6 @@ If you find this code useful for your research, please cite
 ```
 
 ## Setup
-Code for inference in implemented in [Torch](http://torch.ch/).
 
 First [install Torch](http://torch.ch/docs/getting-started.html#installing-torch), then
 update / install the following packages:
@@ -61,7 +60,7 @@ luarocks make stnbdhw-scm-1.rockspec
 
 ### (Optional) cuDNN
 
-When using CUDA, you can use cuDNN to accelerate convolutions and save memory.
+When using CUDA, you can use cuDNN to accelerate convolutions and reduce memory footprint.
 
 First [download cuDNN](https://developer.nvidia.com/cudnn) and copy the
 libraries to `/usr/local/cuda/lib64/`. Then install the Torch bindings for cuDNN:

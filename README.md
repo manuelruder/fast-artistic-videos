@@ -167,7 +167,7 @@ See the example scripts above for a preprocessing pipeline. Each cube face must 
 
 Not (yet) available.
 
-Contact
+## Contact
 
 For issues or questions related to this implementation, please use the [issue tracker](https://github.com/manuelruder/fast-artistic-videos/issues). For everything else, including licensing issues, please email us. Our contact details can be found in [our paper](https://arxiv.org/abs/1708.04538).
 

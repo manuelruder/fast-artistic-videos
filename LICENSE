@@ -1,3 +1,19 @@
+This code is free for personal or research use. Any commercial use is 
+prohibited.
+
+(c) Manuel Ruder, Alexey Dosovitskiy, Thomas Brox 2018
+
+If you use this program, you should cite the following paper:
+
+M. Ruder, A. Dosovitskiy, T. Brox (2017). "Artistic style transfer for videos
+and spherical imagess". arXiv:1708.04538
+
+
+This code is partially based on the fast-neural-style code by Justin Johnson,
+which is free for personal or research use. Justin Johnson must be asked for
+permission if used commercially.
+
+
 The present "stnbdhw" package is a modified version of "stnbhwd" by Maxime Oquab,
 which is covered by the following copyright and permission notice:
 

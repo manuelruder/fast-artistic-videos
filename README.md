@@ -114,7 +114,7 @@ You must specify the following options:
  - ```input_pattern``` File path pattern of the input frames, e.g. ```video/frame_%04d.png```
  - ```flow_pattern``` A file path pattern for files that store the backward flow between the frames. The placeholder in square brackets refers to the frame position where the optical flow starts and the placeholder in braces refers to the frame index where the optical flow points to. For example `flow_[%02d]_{%02d}.flo` means the flow files are named flow_02_01.flo, flow_03_02.flo, etc. If you use the script included in this repository (makeOptFlow.sh), the filename pattern will be `backward_[%d]_{%d}.flo`.
  - ```occlusions_pattern``` A file path pattern for the occlusion maps between two frames. These files should be a grey scale image where a white pixel indicates a high flow weight and a black pixel a low weight, respective. Same format as above. If you use the script, the filename pattern will be `reliable_[%d]_{%d}.pgm`.
- - ```output_prefix``` File path pattern of the output, e.g. `stylized/frame_%04d.png`
+ - ```output_prefix``` File path prefix of the output, e.g. `stylized/out`. Files will then be named `stylized/out-00001.png` etc.
  
 By default this script runs on CPU; to run on GPU, add the flag `-gpu`
 specifying the GPU on which to run.

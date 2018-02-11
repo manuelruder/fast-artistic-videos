@@ -6,7 +6,7 @@ prohibited.
 If you use this program, you should cite the following paper:
 
 M. Ruder, A. Dosovitskiy, T. Brox (2017). "Artistic style transfer for videos
-and spherical imagess". arXiv:1708.04538
+and spherical images". arXiv:1708.04538
 
 
 This code is partially based on the fast-neural-style code by Justin Johnson,

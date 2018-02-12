@@ -11,7 +11,7 @@ Alexey Dosovitskiy,
 
 The paper builds on
 [A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576)
-by Gatys et al. and [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://github.com/jcjohnson/fast-neural-style)
+by Gatys et al. and [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://cs.stanford.edu/people/jcjohns/eccv16/)
 by Johnson et al. and our code is based on Johnson's implementation [fast-neural-style](https://github.com/jcjohnson/fast-neural-style).
 
 It is a successor of our previous work [Artistic style transfer for videos](https://github.com/manuelruder/artistic-videos) and runs several orders of magnitudes faster.
@@ -73,7 +73,7 @@ luarocks install cudnn
 
 To benefit from faster execution times, a fast optical flow estimator is required.
 
-There are sample scripts in our repository for either DeepFlow or FlowNet 2.0. DeepFlow is slower but comes as a standalone executable and is therefore very easy to install (just download the executable). Execution time will still be a lot faster than with our optimization-based approach. Faster execution times can be reached with FlowNet 2.0 which runs on a GPU as well, given you have a sufficient fast GPU. It was used for the experiments in the paper.
+There are exsample scripts in our repository for either DeepFlow or FlowNet 2.0. DeepFlow is slower but comes as a standalone executable and is therefore very easy to install. Execution time will still be a lot faster than with our optimization-based approach. Faster execution times can be reached with FlowNet 2.0 which runs on a GPU as well, given you have a sufficient fast GPU. FlowNet 2.0 was used for the experiments in our paper.
 
 #### DeepFlow setup instructions
 
@@ -84,7 +84,7 @@ Just download both [DeepFlow](http://lear.inrialpes.fr/src/deepflow/) and [DeepM
 Go to [flownet2 (GitHub)](https://github.com/lmb-freiburg/flownet2) and follow the instructions there on how to download, compile and use the source code and pretrained models. Since FlowNet is build upon Caffe, you may also want to read [Caffe | Installation](http://caffe.berkeleyvision.org/installation.html) for a list of dependencies (unfortunately, they are not listed in the flownet2 repository). There is also a Dockerfile for easy installation of the complete code in one step:
 [flownet2-docker (GitHub)](https://github.com/lmb-freiburg/flownet2-docker)
 
-Then, open `run-flownet-multiple.sh` and set the directory to the FlowNet files and models.
+Then edit [`run-flownet-multiple.sh`](https://github.com/manuelruder/fast-artistic-videos/blob/master/run-flownet-multiple.sh) and set the paths to the FlowNet executable, model definition and pretrained weights.
 
 If you have struggles installing Caffe, there is also a TensorFlow implementation: [FlowNet2 (TensorFlow)](https://github.com/sampepose/flownet2-tf). However, you will have to adapt the scripts in this repository accordingly.
 
@@ -99,12 +99,15 @@ bash models/download_models.sh
 
 This will download 6 video model and 6 image model files (~300MB) to the folder `models/`.
 
-You can download pretrained spherical video models with `download_models_vr.sh`, it will download 2 models (~340MB). These models are larger because we used more filters. We later found that less filters can archive similar performance, but didn't retrain the spherical video models.
-
+You can download pretrained spherical video models with `download_models_vr.sh`, it will download 2 models (~340MB). These models are larger because they have more filters. We later found that less filters can archive similar performance, but didn't retrain the spherical video models.
 
 ## Running on new videos
 
+### Example script
+
 You can use the scripts `stylizeVideo_*.sh <path_to_video> <path_to_video_model> [<path_to_image_model>]` to easily stylize videos using pretrained models. Choose one of the optical flow methods and specify one of the models we provide, see above. If image model is not specified, it will use the video model to generate the first frame (by marking everything as occluded). It will do all the preprocessing steps for you. For longer videos, make sure to have enough disk space available. This script will extract the video into uncompressed image files.
+
+### Advanced usage
 
 For advances users, videos can be stylized with `fast_artistic_videos.lua`.
 
@@ -159,7 +162,7 @@ See the example scripts above for a preprocessing pipeline. Each cube face must 
  - ```overlap_pixel_w```: Horizontal overlapping region.
  - ```overlap_pixel_h```: Vertical overlapping region.
  - ```out_cubemap```: Whether the individual cube faces should be combined to one file.
- - ```out_equi```: Whether an additional equirectangular projection should be created from the output. Increases processing time. If this option is present, the size of the projection can be specified with `out_equi_w` and `out_equi_w`.
+ - ```out_equi```: Whether an additional equirectangular projection should be created from the output. Increases processing time. If this option is present, the size of the projection can be specified with `out_equi_w` and `out_equi_h`.
  - ```create_inconsistent_border```: No border consistency (for benchmarking purposes).
 
 ## Training new models

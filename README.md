@@ -16,6 +16,16 @@ by Johnson et al. and our code is based on Johnson's implementation [fast-neural
 
 It is a successor of our previous work [Artistic style transfer for videos](https://github.com/manuelruder/artistic-videos) and runs several orders of magnitudes faster.
 
+**Example videos:**
+
+Comparison between the optimization-based and feed-forward approach:
+
+[![Artistic style transfer for videos and spherical images](http://fs1.directupload.net/images/180213/22rm9myp.jpg)](https://www.youtube.com/watch?v=SKql5wkWz8E&t=3m26s "Artistic style transfer for videos and spherical images")
+
+360° video:
+
+[<img src="https://i.ytimg.com/vi/pkgMUfNeUCQ/hq720.jpg" width="640">](https://www.youtube.com/watch?v=pkgMUfNeUCQ "Style transfer for a 360 VR video")
+
 If you find this code useful for your research, please cite
 
 ```
@@ -140,7 +150,7 @@ To use this script for evaluation, specify `-evaluate` and give the following op
  - ```style_image```: Style image to be used for evaluation.
  - ```style_image_size```
  
-## Running on spherical videos
+## Running on new spherical videos
 
 To stylize spherical videos, frames must present as cube map projections with overlapping borders. Most commonly, however, spherical videos are encoded as equirectangular projection. Therefore, a reporjection becomes necessary.
 

@@ -83,7 +83,7 @@ luarocks install cudnn
 
 To benefit from faster execution times, a fast optical flow estimator is required.
 
-There are exsample scripts in our repository for either DeepFlow or FlowNet 2.0. DeepFlow is slower but comes as a standalone executable and is therefore very easy to install. Execution time will still be a lot faster than with our optimization-based approach. Faster execution times can be reached with FlowNet 2.0 which runs on a GPU as well, given you have a sufficient fast GPU. FlowNet 2.0 was used for the experiments in our paper.
+There are example scripts in our repository for either DeepFlow or FlowNet 2.0. DeepFlow is slower but comes as a standalone executable and is therefore very easy to install. Execution time will still be a lot faster than with our optimization-based approach. Faster execution times can be reached with FlowNet 2.0 which runs on a GPU as well, given you have a sufficient fast GPU. FlowNet 2.0 was used for the experiments in our paper.
 
 #### DeepFlow setup instructions
 

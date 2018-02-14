@@ -68,6 +68,8 @@ cd stnbhwd
 luarocks make stnbdhw-scm-1.rockspec
 ```
 
+For CUDA version 9.0 and later, you must adapt the arch flag in [CMaleList.txt at line 55](https://github.com/manuelruder/fast-artistic-videos/blob/master/stnbdhw/CMakeLists.txt#L55) to your [GPU and CUDA version](http://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/).
+
 ### (Optional) cuDNN
 
 When using CUDA, you can use cuDNN to accelerate convolutions and reduce memory footprint.
@@ -152,7 +154,7 @@ To use this script for evaluation, specify `-evaluate` and give the following op
  
 ## Running on new spherical videos
 
-To stylize spherical videos, frames must present as cube map projections with overlapping borders. Most commonly, however, spherical videos are encoded as equirectangular projection. Therefore, a reporjection becomes necessary.
+To stylize spherical videos, frames must be present as cube map projections with overlapping borders. Most commonly, however, spherical videos are encoded as equirectangular projection. Therefore, a reporjection becomes necessary.
 
 ### Reprojection software
 

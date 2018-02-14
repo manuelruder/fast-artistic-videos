@@ -68,7 +68,7 @@ cd stnbhwd
 luarocks make stnbdhw-scm-1.rockspec
 ```
 
-For CUDA version 9.0 and later, you must adapt the arch flag in [CMaleList.txt at line 55](https://github.com/manuelruder/fast-artistic-videos/blob/master/stnbdhw/CMakeLists.txt#L55) to your [GPU and CUDA version](http://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/).
+For CUDA version 9.0 and later, you must adapt the arch flag in [CMakeLists.txt at line 55](https://github.com/manuelruder/fast-artistic-videos/blob/master/stnbdhw/CMakeLists.txt#L55) to your [GPU and CUDA version](http://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/).
 
 ### (Optional) cuDNN
 

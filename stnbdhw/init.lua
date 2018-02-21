@@ -8,6 +8,4 @@ end
 
 require('stn.BilinearSamplerBDHW')
 
-require('stn.test')
-
 return nn

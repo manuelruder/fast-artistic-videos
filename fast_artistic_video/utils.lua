@@ -144,7 +144,7 @@ function M.warp_image(img, map, dtype)
     return warpNet:forward( { img, map } )
   else
     --CPU warping
-    return image.warp(img, map, 'bilinear', true, 'pad', 0)
+    return image.warp(img:float(), map:float(), 'bilinear', true, 'pad', 0):type(dtype)
   end
 end
 

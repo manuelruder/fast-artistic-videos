@@ -70,6 +70,8 @@ luarocks make stnbdhw-scm-1.rockspec
 
 For CUDA version 9.0 and later, you must adapt the arch flag in [CMakeLists.txt at line 55](https://github.com/manuelruder/fast-artistic-videos/blob/master/stnbdhw/CMakeLists.txt#L55) to your [GPU and CUDA version](http://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/).
 
+*If you can not get stnbhwd to run but you want to use GPU acceleration at least for the stylization, remove* [*all instances of* require 'stn'](https://github.com/manuelruder/fast-artistic-videos/search?l=Lua&q=%22require+%27stn%27+%22&type=Code) *from the code and edit the [warp_image function in utilities.lua](https://github.com/manuelruder/fast-artistic-videos/blob/master/fast_artistic_video/utils.lua#L141) and remove everything in that function but line 147.*
+
 ### (Optional) cuDNN
 
 When using CUDA, you can use cuDNN to accelerate convolutions and reduce memory footprint.
@@ -83,7 +85,7 @@ luarocks install cudnn
 
 ### Optical flow estimator
 
-To benefit from faster execution times, a fast optical flow estimator is required.
+Our algorithm needs an utility which estimates the [optical flow](https://en.wikipedia.org/wiki/Optical_flow) between two images. Since our new stylization algorithm only needs a fraction of the time compared to the optimization-based approach, the optical flow estimator can become the bottleneck. Hence the choice of a fast optical flow estimator is crucial for near real time execution.
 
 There are example scripts in our repository for either DeepFlow or FlowNet 2.0. DeepFlow is slower but comes as a standalone executable and is therefore very easy to install. Execution time will still be a lot faster than with our optimization-based approach. Faster execution times can be reached with FlowNet 2.0 which runs on a GPU as well, given you have a sufficient fast GPU. FlowNet 2.0 was used for the experiments in our paper.
 

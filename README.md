@@ -87,7 +87,7 @@ luarocks install cudnn
 
 Our algorithm needs an utility which estimates the [optical flow](https://en.wikipedia.org/wiki/Optical_flow) between two images. Since our new stylization algorithm only needs a fraction of the time compared to the optimization-based approach, the optical flow estimator can become the bottleneck. Hence the choice of a fast optical flow estimator is crucial for near real time execution.
 
-There are example scripts in our repository for either DeepFlow or FlowNet 2.0. DeepFlow is slower but comes as a standalone executable and is therefore very easy to install. Execution time will still be a lot faster than with our optimization-based approach. Faster execution times can be reached with FlowNet 2.0 which runs on a GPU as well, given you have a sufficient fast GPU. FlowNet 2.0 was used for the experiments in our paper.
+There are example scripts in our repository for either DeepFlow or FlowNet 2.0. DeepFlow is slower but comes as a standalone executable and is therefore very easy to install. Faster execution times can be reached with FlowNet 2.0 which runs on a GPU as well, given you have a sufficient fast GPU. FlowNet 2.0 was used for the experiments in our paper.
 
 #### DeepFlow setup instructions
 
@@ -95,7 +95,7 @@ Just download both [DeepFlow](http://lear.inrialpes.fr/src/deepflow/) and [DeepM
 
 #### FlowNet 2.0 setup instructions
 
-Go to [flownet2 (GitHub)](https://github.com/lmb-freiburg/flownet2) and follow the instructions there on how to download, compile and use the source code and pretrained models. Since FlowNet is build upon Caffe, you may also want to read [Caffe | Installation](http://caffe.berkeleyvision.org/installation.html) for a list of dependencies (unfortunately, they are not listed in the flownet2 repository). There is also a Dockerfile for easy installation of the complete code in one step:
+Go to [flownet2 (GitHub)](https://github.com/lmb-freiburg/flownet2) and follow the instructions there on how to download, compile and use the source code and pretrained models. Since FlowNet is build upon Caffe, you may also want to read [Caffe | Installation](http://caffe.berkeleyvision.org/installation.html) for a list of dependencies. There is also a Dockerfile for easy installation of the complete code in one step:
 [flownet2-docker (GitHub)](https://github.com/lmb-freiburg/flownet2-docker)
 
 Then edit [`run-flownet-multiple.sh`](https://github.com/manuelruder/fast-artistic-videos/blob/master/run-flownet-multiple.sh) and set the paths to the FlowNet executable, model definition and pretrained weights.

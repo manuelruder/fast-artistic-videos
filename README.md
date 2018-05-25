@@ -39,6 +39,8 @@ If you find this code useful for your research, please cite
 
 ## Setup
 
+*Note: I got a lot of reports recently that this implementation produces enerous results. Similar issues exist for fast-neural-style where users reported that using newer torch / CUDA versions were the cause for this. Some were able to fix this by [downgrading torch](https://github.com/jcjohnson/fast-neural-style/issues/153#issuecomment-373625993), others by [downgrading CUDA](https://github.com/jcjohnson/fast-neural-style/issues/137#issuecomment-334979780). The exact reason is still unknown. Unfortunately, I do not have the time to constantly update all my previous, already finished projects because certain software developers feel that a breaking change is necessray in their software (or don't care about backward compatibility in the first place). If anyone knows a fix, let me know. Contributions are also welcome.*
+
 First [install Torch](http://torch.ch/docs/getting-started.html#installing-torch), then
 update / install the following packages:
 

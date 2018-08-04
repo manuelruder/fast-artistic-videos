@@ -39,6 +39,15 @@ If you find this code useful for your research, please cite
   url          = "http://lmb.informatik.uni-freiburg.de/Publications/2018/RDB18"
 }
 ```
+## Table of contents
+
+  * [Setup](#setup)
+  * [Running on new videos](#running-on-new-videos)
+  * [Running on new spherical videos](#running-on-new-spherical-videos)
+  * [Training new models](#training-new-models)
+  * [Contact](#contact)
+  * [License](#license)
+
 
 ## Setup
 

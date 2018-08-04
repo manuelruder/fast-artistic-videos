@@ -29,11 +29,14 @@ Comparison between the optimization-based and feed-forward approach:
 If you find this code useful for your research, please cite
 
 ```
-@inproceedings{Ruder2017,
-  title={Artistic style transfer for videos and spherical images},
-  author={Manuel Ruder, Alexey Dosovitskiy, Thomas Brox},
-  booktitle={CoRR},
-  year={2017}
+@Article{RDB18,
+  author       = "M. Ruder and A. Dosovitskiy and T. Brox",
+  title        = "Artistic style transfer for videos and spherical images",
+  journal      = "International Journal of Computer Vision",
+  month        = " ",
+  year         = "2018",
+  note         = "online first",
+  url          = "http://lmb.informatik.uni-freiburg.de/Publications/2018/RDB18"
 }
 ```
 
@@ -135,7 +138,7 @@ You must specify the following options:
  - ```occlusions_pattern``` A file path pattern for the occlusion maps between two frames. These files should be a grey scale image where a white pixel indicates a high flow weight and a black pixel a low weight, respective. Same format as above. If you use the script, the filename pattern will be `reliable_[%d]_{%d}.pgm`.
  - ```output_prefix``` File path prefix of the output, e.g. `stylized/out`. Files will then be named `stylized/out-00001.png` etc.
  
-By default this script runs on CPU; to run on GPU, add the flag `-gpu`
+By default, this script runs on CPU; to run on GPU, add the flag `-gpu`
 specifying the GPU on which to run.
 
 Other useful options:
@@ -183,7 +186,114 @@ See the example scripts above for a preprocessing pipeline. Each cube face must 
 
 ## Training new models
 
-Not (yet) available.
+Training a new model is complicated and requires a lot of preparation steps. Only recommended for advanced users.
+
+### Prerequisites
+
+*Note that you can omit some of these steps depending on the training parameters (see below). If you aim to reproduce the results in our paper, all steps are necessary though.*
+
+First, you need to prepare a video dataset consisting of videos from the hollywood2 dataset. This requires a lot of free hard drive capacity (>200 GB).
+
+* Prepare a python environment with h5py, numpy, Pillow, scipy, six installed (see [this requirements.txt](https://github.com/jcjohnson/fast-neural-style/blob/a6de27dfc2387193a244038952acf2409d80973b/requirements.txt))
+* Visit [HOLLYWOOD2](http://www.di.ens.fr/~laptev/actions/hollywood2/), download *Scene samples (25Gb)* and extract the files to your hard drive.
+* Run `video_dataset/make_flow_list.py <folder_to_extracted_dataset> <output_folder> [<num_tuples_per_scene> [<num_frames_per_tuble>]]`. This script will extract  *<num_tuples_per_scene>* tuples consisting of *<num_frames_per_tuble>* consecutive frames from each scene of the hollywood2 dataset by amount of motion in the scene and create a file called flowlist.txt in the output folder. The default is `num_frames_per_tuble=5` (needed for multi-frame traning, otherwise set to `2`) and `num_tuples_per_scene=5` (can be reduced if hard disk space is limited).
+* Compute optical flow for all frame pairs listed in flowlist.txt. This file also contains the output paths and is directly compatible to flownet2.
+* Compute occlusions from the forward and backward flow using the script `bash video_dataset/make_occlusions.sh <output_folder>`, where `<output_folder>` should be identical to `<output_folder>` in step 3.
+* Run `make_video_dataset.py --input_dir <path> --sequence_length <n>`, where `<path>` should be identical to `<output_folder>` and `<n>` to `<num_tuples_per_scene>` in step 3.
+
+Secondly, to make use of the mixed training strategy, the spherical video training or the additional training data from simulated camera movement on single images, you also need to prepare a single image dataset [as described by Johnson et al.](https://github.com/jcjohnson/fast-neural-style/blob/a6de27dfc2387193a244038952acf2409d80973b/doc/training.md). You may want to change image size to `384x384`, since the algorithm takes multiple smaller crops per image and resizes them to `256x256`.
+
+Thirdly, you have to download the loss network from [here](http://cs.stanford.edu/people/jcjohns/fast-neural-style/models/vgg16.t7) and place it somewhere.
+
+Fourthly, create a single image style transfer model [as described by Johnson et al.](https://github.com/jcjohnson/fast-neural-style) (you can also use a pre-trained model if it has the same style). Please remember settings for style and content weight, style image size and other parameters that change the appearance of the stylized image. Then use the same parameters for the video net. Different parameters may cause unwanted results. 
+
+### Training parameters
+
+Now, you can start a training using train_video.lua with the following main arguments:
+
+* `-h5_file`: Path to a file containing single images (e.g. from MS COCO, created as described in fast-neural-style). Required if you use any data source other than `video` in the `data_mix` argument.
+* `-h5_file_video`: Path to a file containing video frames and optical flow. (As created above). Required if you use the `video` data source in the `data_mix` argument.
+* `-image_model`: Path to a pretrained image model to generate the first frame. (or `self`, if the first frame should be generated by the video network pretending an all-occluded empty prior image. You may also set `single_image_unti` then.)
+* `-style_image`: Path to the style image.
+* `-loss_network`: Path to a `.t7` file containing a pretrained CNN to be used as a loss network. The default is VGG-16, but the code should support many models such as VGG-19 and ResNets.
+ 
+Besides that, the following optional arguments can be modified to customize the result:
+
+**Training data options**:
+- `-data_mix`: What kind of training samples the network should use and how they are weighted. Weights are integer numbers and specify the probability of sampling during training. (Each number is divided by the sum of all numbers to get a proper probability distribution) Can be any of the following; multiple values are separated by a comma and the weight of each source is appended by a colon.
+  - `single_image`: Present an empty all-occluded prior image as the first frame and let the network stylize the image from scratch (corresponding to the mixed training strategy in the paper)
+  - `shift`: Take a single image and shift image to simulate camera movement.
+  - `zoom_out`: Same as above but with a zoom-out effect.
+  - `video`: Actual video frames from the video dataset.
+  - `vr`: Pseuo-warped images to simulate spherical video input (in the cube face format).
+  Example:`shift:1,zoom_out:1,video:3`. Then, `shift`, `zoom_out` and `video` are sampled with probability 1/5, 1/5 and 3/5, respectively.
+- `-num_frame_steps` How many frames to use per-sample in a pseudo-reccursive manner (as described by our paper by the multi-frame training) as a function of the iteration. (Default: `0:1`)
+- `-single_image_until`: Use only the `single_image` data source until the given epoch. (default: `0`)
+- `-reliable_map_min_filter`: Width of minimum filter applied to the reliable map such that artefacts near motion boundaries are removed. (Default: `7`)
+
+**Model options**:
+- `-arch`: String specifying the architecture to use. Architectures are specified as comma-separated strings. The architecture used in the paper is
+  `c9s1-32,d64,d128,R128,R128,R128,R128,R128,u64,u32,c9s1-3`. All internal convolutional layers are followed by a ReLU and either batch normalization or instance normalization.
+  - `cXsY-Z`: A convolutional layer with a kernel size of `X`, a stride of `Y`, and `Z` filters.
+  - `dX`: A downsampling convolutional layer with `X` filters, 3x3 kernels, and stride 2.
+  - `RX`: A residual block with two convolutional layers and `X` filters per layer.
+  - `uX`: An upsampling convolutional layer with `X` filters, 3x3 kernels, and stride 1/2.
+- `-use_instance_norm`: 1 to use instance normalization or 0 to use batch normalization. Default is 1.
+- `-padding_type`: What type of padding to use for convolutions in residual blocks. The following choices are available:
+  - `zero`: Normal zero padding everywhere.
+  - `reflect`: Spatial reflection padding for all convolutions in residual blocks.
+  - `replicate`: Spatial replication padding for all convolutions in residual blocks.
+  - `reflect-start` (default): Spatial reflection padding at the beginning of the model and no padding for convolutions in residual blocks.
+- `-tanh_constant`: There is a tanh nonlinearity after the final convolutional layer; this puts outputs in the range [-1, 1]. Outputs are then multiplied by the `-tanh_constant` so the outputs are in a more standard image range.
+- `-preprocessing`: What type of preprocessing and deprocessing to use; either `vgg` or `resnet`. Default is `vgg`. If you want to use a ResNet as loss network you should set this to `resnet`.
+- `-resume_from_checkpoint`: Path to a `.t7` checkpoint created by `train_video.lua` to initialize the model from. If you use this option then all other model architecture options will be ignored. Note that this will not restore the optimizer state, so that this option is mainly useful for finetuning with different input data.
+
+**Optimization options**:
+- `-pixel_loss_weight`: Weight to use for the temporal consistency loss. Note: if you use the mixed training strategy, this weight must be increased proportional to the number of `single_image` samples. (Default: `50`)
+- `-content_weights`: Weight to use for each content reconstruction loss. (Default: `1`)
+- `-content_layers`: Which layers of the loss network to use for the content reconstruction loss. This will usually be a comma-separated list of integers, but for complicated loss networks like ResNets it can be a list of layer strings.
+- `-style_weights`: Weight to use for style reconstruction loss. Reasonable values are between 5 and 20, dependent on the style image and your preference. (Default: `10`)
+- `-style_image_size`: Before computing the style loss targets, the style image will be resized so its smaller side is this many pixels long. This can have a big effect on the types of features transferred from the style image.
+- `-style_layers`: Which layers of the loss network to use for the style reconstruction loss. This is a comma-separated list of the same format as `-content_layers`.
+- `-tv_strength`: Strength for total variation regularization on the output of the transformation network. Default is `1e-6`; higher values encourage the network to produce outputs that are spatially smooth.
+- `-num_iterations`: Total number of iterations. (default: `60000`)
+- `-batch_size`: Batch-size. Since we use instance normalization, smaller batch sized can be used without substantial degeneration. (default: ```4```)
+- `-learning_rate` (default: `1e-3`)
+
+**Checkpointing**:
+- `-checkpoint_every`: Every `checkpoint_every` iterations, check performance on the validation set and save both a `.t7` model checkpoint and a `.json` checkpoint with loss history.
+- `-checkpoint_name`: Path where checkpoints are saved. Default is `checkpoint`, meaning that every `-checkpoint_every` iterations we will write files `checkpoint.t7` and `checkpoint.json`.
+- `-images_every`: Save current input images, occlusion mask and network output every `images_every` iterations in a folder named `debug`. Useful to see what the network has already learned and to detect errors that lead to degeneration. (default: `100`)
+
+**Backend**:
+- `-gpu`: Which GPU to use; default is 0. Set this to -1 to train in CPU mode.
+- `-backend`: Which backend to use for GPU, either `cuda` or `opencl`.
+- `-use_cudnn`: Whether to use cuDNN when using CUDA; 0 for no and 1 for yes.
+
+
+### Training parameters for the results in our paper
+
+**Simple training (baseline)**:
+
+```th train_video.lua -data_mix video:3,shift:1,zoom_out:1 -num_frame_steps 0:1 -num_iterations 60000 -pixel_loss_weight 50```
+
+**Mixed training**:
+
+```th train_video.lua -data_mix video:3,shift:1,zoom_out:1,single_image:5 -num_frame_steps 0:1 -num_iterations 60000  -pixel_loss_weight 100```
+
+**Multi-frame, mixed training**:
+
+```th train_video.lua -data_mix video:3,shift:1,zoom_out:1,single_image:5 -num_frame_steps 0:1,50000:2,60000:4 -num_iterations 90000 -pixel_loss_weight 100```
+
+**Spherical videos**:
+
+First, train a video model of any kind.
+
+Then, finetune on spherical images:
+
+```train_video.lua -resume_from_checkpoint <checkpoint_path> --data_mix ...,vr:<n> -num_iterations <iter>+30000```
+
+where you have to replace `<n>` such that vr is presented exactly half of the time (e.g. 5 for simple training, 10 for multi-frame) and `<iter>+30000` with 30000 added to the number of iterations of the previous model (i.e. we finetune for 30000 iterations).
 
 ## Contact
 

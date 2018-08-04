@@ -77,7 +77,7 @@ void computeCorners(const CTensor<float>& image, CMatrix<float>* corners, float 
   }
 }
 
-void checkConsistency(const CTensor<float>& flow1, const CTensor<float>& flow2, const CMatrix<float>& structure, CMatrix<float>& reliable) {
+void checkConsistency(const CTensor<float>& flow1, const CTensor<float>& flow2, bool useStrcuture, const CMatrix<float>& structure, CMatrix<float>& reliable) {
   int xSize = flow1.xSize(), ySize = flow1.ySize();
   int size = xSize * ySize;
   CTensor<float> flow_dx(xSize,ySize,2);
@@ -92,9 +92,11 @@ void checkConsistency(const CTensor<float>& flow1, const CTensor<float>& flow2, 
     motionEdge.data()[i] += flow_dy.data()[i]*flow_dy.data()[i];
     motionEdge.data()[i] += flow_dy.data()[size+i]*flow_dy.data()[size+i];
   }
-  
-  float structureAvg = structure.avg();
-  
+
+  float structureAvg = 0;
+  if (useStrcuture)
+    structureAvg = structure.avg();
+ 
   for (int ay = 0; ay < flow1.ySize(); ay++)
     for (int ax = 0; ax < flow1.xSize(); ax++) {
       float bx = ax+flow1(ax, ay, 0);
@@ -117,7 +119,9 @@ void checkConsistency(const CTensor<float>& flow1, const CTensor<float>& flow2, 
       float u2 = flow1(ax,ay,0);
       float v2 = flow1(ax,ay,1);
       // Avoid false detections in homogeneous regions
-      float structureTerm = 4.0f/structureAvg * std::max(0.0f, structureAvg/2.0f - structure(ax, ay));
+      float structureTerm = 0;
+      if (useStrcuture)
+        structureTerm = 4.0f/structureAvg * std::max(0.0f, structureAvg/2.0f - structure(ax, ay));
       if (((cx-ax) * (cx-ax) + (cy-ay) * (cy-ay)) >= 0.01*(u2*u2 + v2*v2 + u*u + v*v) + structureTerm + 0.5f) {
         reliable(ax, ay) = 0.0f;
         continue;
@@ -130,30 +134,39 @@ void checkConsistency(const CTensor<float>& flow1, const CTensor<float>& flow2, 
 }
 
 int main(int argc, char** args) {
-  assert(argc >= 5);
+  assert(argc >= 4);
+
+  //printf(args[1]);
 
   CTensor<float> flow1,flow2;
   readMiddlebury(args[1], flow1);
   readMiddlebury(args[2], flow2);
-  
-  CMatrix<float> structure;
-  CTensor<float> image;
-  image.readFromPPM(args[4]);
-  
-  computeCorners(image, &structure, 3.0f);
-  structure.normalize(0.0f, 1.0f);
-
   assert(flow1.xSize() == flow2.xSize());
   assert(flow1.ySize() == flow2.ySize());
+
 
   int xSize = flow1.xSize(), ySize = flow1.ySize();
 
   // Check consistency of forward flow via backward flow and exclude motion boundaries
   CMatrix<float> reliable(xSize, ySize, 255.0f);
-  checkConsistency(flow1, flow2, structure, reliable);
+  reliable.writeToPGM(args[3]);
+  
+  if (argc >= 5) {
+    CMatrix<float> structure;
+    CTensor<float> image;
+    image.readFromPPM(args[4]);
+    computeCorners(image, &structure, 3.0f);
+    structure.normalize(0.0f, 1.0f);
+    checkConsistency(flow1, flow2, true, structure, reliable);
+  } else {
+    CMatrix<float> structure;
+    checkConsistency(flow1, flow2, false, structure, reliable);
+  }
 
+  printf(args[3]);
+
+  
   reliable.clip(0.0f, 255.0f);
  
-
   reliable.writeToPGM(args[3]);
 }

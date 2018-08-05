@@ -2,7 +2,7 @@
 
 This is the source code for fast video style transfer described in
 
-**[Artistic style transfer for videos and spherical images](https://arxiv.org/abs/1708.04538)**
+**[Artistic style transfer for videos and spherical images](https://lmb.informatik.uni-freiburg.de/Publications/2018/RDB18/)**
 <br>
 Manuel Ruder,
 Alexey Dosovitskiy,
@@ -207,8 +207,8 @@ First, you need to prepare a video dataset consisting of videos from the hollywo
 * Visit [HOLLYWOOD2](http://www.di.ens.fr/~laptev/actions/hollywood2/), download *Scene samples (25Gb)* and extract the files to your hard drive.
 * Run `video_dataset/make_flow_list.py <folder_to_extracted_dataset> <output_folder> [<num_tuples_per_scene> [<num_frames_per_tuble>]]`. This script will extract  *<num_tuples_per_scene>* tuples consisting of *<num_frames_per_tuble>* consecutive frames from each scene of the hollywood2 dataset by amount of motion in the scene and create a file called flowlist.txt in the output folder. The default is `num_frames_per_tuble=5` (needed for multi-frame traning, otherwise set to `2`) and `num_tuples_per_scene=5` (can be reduced if hard disk space is limited).
 * Compute optical flow for all frame pairs listed in flowlist.txt. This file also contains the output paths and is directly compatible to flownet2.
-* Compute occlusions from the forward and backward flow using the script `bash video_dataset/make_occlusions.sh <output_folder>`, where `<output_folder>` should be identical to `<output_folder>` in step 3.
-* Run `make_video_dataset.py --input_dir <path> --sequence_length <n>`, where `<path>` should be identical to `<output_folder>` and `<n>` to `<num_tuples_per_scene>` in step 3.
+* Compute occlusions from the forward and backward flow using the script `bash video_dataset/make_occlusions.sh <output_folder>`, where *<output_folder>* should be identical to *<output_folder>* in step 3.
+* Run `make_video_dataset.py --input_dir <path> --sequence_length <n>`, where *\<path\>* should be identical to *\<output_folder\>* and *\<n\>* to *\<num_tuples_per_scene\>* in step 3.
 
 Secondly, to make use of the mixed training strategy, the spherical video training or the additional training data from simulated camera movement on single images, you also need to prepare a single image dataset [as described by Johnson et al.](https://github.com/jcjohnson/fast-neural-style/blob/a6de27dfc2387193a244038952acf2409d80973b/doc/training.md). You may want to change image size to `384x384`, since the algorithm takes multiple smaller crops per image and resizes them to `256x256`.
 

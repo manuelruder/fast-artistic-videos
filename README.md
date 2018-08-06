@@ -208,7 +208,7 @@ First, you need to prepare a video dataset consisting of videos from the hollywo
 * Run `video_dataset/make_flow_list.py <folder_to_extracted_dataset> <output_folder> [<num_tuples_per_scene> [<num_frames_per_tuble>]]`. This script will extract  *<num_tuples_per_scene>* tuples consisting of *<num_frames_per_tuble>* consecutive frames from each scene of the hollywood2 dataset by amount of motion in the scene and create a file called flowlist.txt in the output folder. The default is `num_frames_per_tuble=5` (needed for multi-frame traning, otherwise set to `2`) and `num_tuples_per_scene=5` (can be reduced if hard disk space is limited).
 * Compute optical flow for all frame pairs listed in flowlist.txt. This file also contains the output paths and is directly compatible to flownet2.
 * Compute occlusions from the forward and backward flow using the script `bash video_dataset/make_occlusions.sh <output_folder>`, where *<output_folder>* should be identical to *<output_folder>* in step 3.
-* Run `make_video_dataset.py --input_dir <path> --sequence_length <n>`, where *\<path\>* should be identical to *\<output_folder\>* and *\<n\>* to *\<num_tuples_per_scene\>* in step 3.
+* Run `video_dataset/make_video_dataset.py --input_dir <path> --sequence_length <n>`, where *\<path\>* should be identical to *\<output_folder\>* and *\<n\>* to *\<num_tuples_per_scene\>* in step 3.
 
 Secondly, to make use of the mixed training strategy, the spherical video training or the additional training data from simulated camera movement on single images, you also need to prepare a single image dataset [as described by Johnson et al.](https://github.com/jcjohnson/fast-neural-style/blob/a6de27dfc2387193a244038952acf2409d80973b/doc/training.md). You may want to change image size to `384x384`, since the algorithm takes multiple smaller crops per image and resizes them to `256x256`.
 
@@ -236,8 +236,8 @@ Besides that, the following optional arguments can be modified to customize the 
   - `video`: Actual video frames from the video dataset.
   - `vr`: Pseuo-warped images to simulate spherical video input (in the cube face format).
   Example:`shift:1,zoom_out:1,video:3`. Then, `shift`, `zoom_out` and `video` are sampled with probability 1/5, 1/5 and 3/5, respectively.
-- `-num_frame_steps` How many frames to use per-sample in a pseudo-reccursive manner (as described by our paper by the multi-frame training) as a function of the iteration. (Default: `0:1`)
-- `-single_image_until`: Use only the `single_image` data source until the given epoch. (default: `0`)
+- `-num_frame_steps` How many succesive frames to use per sample in a pseudo-reccursive manner (as described by our paper by the multi-frame training) as a function of the iteration. Multiple data points are separated by a comma. E.g. `0:1,50000:2` means that one succesive frame is used at the beginning and two succesive frames are used starting with iteration 50000. (Default: `0:1`)
+- `-single_image_until`: Use only the `single_image` data source until the given iteration. (default: `0`)
 - `-reliable_map_min_filter`: Width of minimum filter applied to the reliable map such that artefacts near motion boundaries are removed. (Default: `7`)
 
 **Model options**:

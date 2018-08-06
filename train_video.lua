@@ -28,7 +28,7 @@ cmd:option('-preprocessing', 'vgg')
 cmd:option('-resume_from_checkpoint', '')
 cmd:option('-image_model', '')
 
-cmd:option('-data_mix', 'trans:1,zoom_out:1,video:2')
+cmd:option('-data_mix', 'shift:1,zoom_out:1,video:3')
 cmd:option('-num_frame_steps', '0:1')
 cmd:option('-reliable_map_min_filter', 7)
 cmd:option('-fill_occlusions', 'vgg-mean', 'uniform-random|vgg-mean')

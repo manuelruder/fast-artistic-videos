@@ -241,8 +241,8 @@ Besides that, the following optional arguments can be modified to customize the 
 - `-reliable_map_min_filter`: Width of minimum filter applied to the reliable map such that artefacts near motion boundaries are removed. (Default: `7`)
 
 **Model options**:
-- `-arch`: String specifying the architecture to use. Architectures are specified as comma-separated strings. The architecture used in the paper is
-  `c9s1-32,d64,d128,R128,R128,R128,R128,R128,u64,u32,c9s1-3`. All internal convolutional layers are followed by a ReLU and either batch normalization or instance normalization.
+- `-arch`: String specifying the architecture to use. Architectures are specified as comma-separated strings. The architecture used in the original paper by Johnson et al. is
+  `c9s1-32,d64,d128,R128,R128,R128,R128,R128,u64,u32,c9s1-3`. However, we achieved better results with `c9s1-32,d64,d128,R128,R128,R128,R128,R128,U2,c3s1-64,U2,c9s1-3`. All internal convolutional layers are followed by a ReLU and either batch normalization or instance normalization.
   - `cXsY-Z`: A convolutional layer with a kernel size of `X`, a stride of `Y`, and `Z` filters.
   - `dX`: A downsampling convolutional layer with `X` filters, 3x3 kernels, and stride 2.
   - `RX`: A residual block with two convolutional layers and `X` filters per layer.

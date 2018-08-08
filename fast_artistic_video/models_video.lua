@@ -1,7 +1,7 @@
 require 'nn'
-require 'fast_neural_style.ShaveImage'
-require 'fast_neural_style.TotalVariation'
-require 'fast_neural_style.InstanceNormalization'
+require 'fast-artistic-videos.ShaveImage'
+require 'fast-artistic-videos.TotalVariation'
+require 'fast-artistic-videos.InstanceNormalization'
 
 
 local M = {}

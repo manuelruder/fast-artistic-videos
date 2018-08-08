@@ -247,6 +247,7 @@ Besides that, the following optional arguments can be modified to customize the 
   - `dX`: A downsampling convolutional layer with `X` filters, 3x3 kernels, and stride 2.
   - `RX`: A residual block with two convolutional layers and `X` filters per layer.
   - `uX`: An upsampling convolutional layer with `X` filters, 3x3 kernels, and stride 1/2.
+  - `UX`: A nearest neighbor upsampling layer with an upsampling factor of `X`. Avoids checkerboard pattern compared to upsampling conv as described [here](https://distill.pub/2016/deconv-checkerboard/).
 - `-use_instance_norm`: 1 to use instance normalization or 0 to use batch normalization. Default is 1.
 - `-padding_type`: What type of padding to use for convolutions in residual blocks. The following choices are available:
   - `zero`: Normal zero padding everywhere.
@@ -284,15 +285,15 @@ Besides that, the following optional arguments can be modified to customize the 
 
 **Simple training (baseline)**:
 
-```th train_video.lua -data_mix video:3,shift:1,zoom_out:1 -num_frame_steps 0:1 -num_iterations 60000 -pixel_loss_weight 50```
+```th train_video.lua -data_mix video:3,shift:1,zoom_out:1 -num_frame_steps 0:1 -num_iterations 60000 -pixel_loss_weight 50 -arch c9s1-32,d64,d128,R128,R128,R128,R128,R128,U2,c3s1-64,U2,c9s1-3```
 
 **Mixed training**:
 
-```th train_video.lua -data_mix video:3,shift:1,zoom_out:1,single_image:5 -num_frame_steps 0:1 -num_iterations 60000  -pixel_loss_weight 100```
+```th train_video.lua -data_mix video:3,shift:1,zoom_out:1,single_image:5 -num_frame_steps 0:1 -num_iterations 60000  -pixel_loss_weight 100 -arch c9s1-32,d64,d128,R128,R128,R128,R128,R128,U2,c3s1-64,U2,c9s1-3```
 
 **Multi-frame, mixed training**:
 
-```th train_video.lua -data_mix video:3,shift:1,zoom_out:1,single_image:5 -num_frame_steps 0:1,50000:2,60000:4 -num_iterations 90000 -pixel_loss_weight 100```
+```th train_video.lua -data_mix video:3,shift:1,zoom_out:1,single_image:5 -num_frame_steps 0:1,50000:2,60000:4 -num_iterations 90000 -pixel_loss_weight 100 -arch c9s1-32,d64,d128,R128,R128,R128,R128,R128,U2,c3s1-64,U2,c9s1-3```
 
 **Spherical videos**:
 
@@ -300,7 +301,7 @@ First, train a video model of any kind.
 
 Then, finetune on spherical images:
 
-```train_video.lua -resume_from_checkpoint <checkpoint_path> --data_mix ...,vr:<n> -num_iterations <iter>+30000```
+```th train_video.lua -resume_from_checkpoint <checkpoint_path> --data_mix ...,vr:<n> -num_iterations <iter>+30000 -arch ... ```
 
 where you have to replace `<n>` such that vr is presented exactly half of the time (e.g. 5 for simple training, 10 for multi-frame) and `<iter>+30000` with 30000 added to the number of iterations of the previous model (i.e. we finetune for 30000 iterations).
 

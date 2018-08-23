@@ -206,7 +206,7 @@ First, you need to prepare a video dataset consisting of videos from the hollywo
 * Prepare a python environment with h5py, numpy, Pillow, scipy, six installed (see [this requirements.txt](https://github.com/jcjohnson/fast-neural-style/blob/a6de27dfc2387193a244038952acf2409d80973b/requirements.txt))
 * Visit [HOLLYWOOD2](http://www.di.ens.fr/~laptev/actions/hollywood2/), download *Scene samples (25Gb)* and extract the files to your hard drive.
 * Run `video_dataset/make_flow_list.py <folder_to_extracted_dataset> <output_folder> [<num_tuples_per_scene> [<num_frames_per_tuble>]]`. This script will extract  *<num_tuples_per_scene>* tuples consisting of *<num_frames_per_tuble>* consecutive frames from each scene of the hollywood2 dataset by amount of motion in the scene and create a file called flowlist.txt in the output folder. The default is `num_frames_per_tuble=5` (needed for multi-frame traning, otherwise set to `2`) and `num_tuples_per_scene=5` (can be reduced if hard disk space is limited).
-* Compute optical flow for all frame pairs listed in flowlist.txt. This file also contains the output paths and is directly compatible to flownet2.
+* Compute optical flow for all frame pairs listed in flowlist.txt. This file also contains the output paths and is directly compatible to the flownet2 script [run-flownet-many.py](https://github.com/lmb-freiburg/flownet2/blob/master/scripts/run-flownet-many.py) which expects a listfile as input.
 * Compute occlusions from the forward and backward flow using the script `bash video_dataset/make_occlusions.sh <output_folder>`, where *<output_folder>* should be identical to *<output_folder>* in step 3.
 * Run `video_dataset/make_video_dataset.py --input_dir <path> --sequence_length <n>`, where *\<path\>* should be identical to *\<output_folder\>* and *\<n\>* to *\<num_tuples_per_scene\>* in step 3.
 
@@ -301,9 +301,9 @@ First, train a video model of any kind.
 
 Then, finetune on spherical images:
 
-```th train_video.lua -resume_from_checkpoint <checkpoint_path> --data_mix ...,vr:<n> -num_iterations <iter>+30000 -arch ... ```
+```th train_video.lua -resume_from_checkpoint <checkpoint_path> --data_mix ...,vr:<n> -num_iterations <iter>+30000 -checkpoint_name ..._vr```
 
-where you have to replace `<n>` such that vr is presented exactly half of the time (e.g. 5 for simple training, 10 for multi-frame) and `<iter>+30000` with 30000 added to the number of iterations of the previous model (i.e. we finetune for 30000 iterations).
+where you have to replace `<n>` such that vr is presented exactly half of the time (e.g. 5 for simple training, 10 for multi-frame) and `<iter>+30000` with 30000 added to the number of iterations of the previous model (i.e. we finetune for 30000 iterations), and use otherwise the same parameters as the video model. However, to avoid that the video model gets overwritten, change parameter *checkpoint_name*.
 
 ## Contact
 

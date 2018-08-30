@@ -37,11 +37,10 @@ for videofile in os.listdir(videos_folder):
   file.close()
   
   frame_subfolder = os.path.join(frames_folder, subfolder)
-  print(frame_subfolder)
   if not os.path.exists(frames_folder): os.mkdir(frames_folder)
   if not os.path.exists(frame_subfolder): os.mkdir(frame_subfolder)
 
-  os.system('ffmpeg -i "%s" -vf "scale=-1:256,scale='max(in_w,384)':-1,crop=384:256:(in_w-384)/2:(in_h-256)/2" "%s/frame_%%04d.png"' % (os.path.join(videos_folder, videofile), frame_subfolder))
+  os.system('ffmpeg -i "%s" -vf "scale=-1:256,scale=\'max(in_w,384)\':-1,crop=384:256:(in_w-384)/2:(in_h-256)/2" "%s/frame_%%04d.png"' % (os.path.join(videos_folder, videofile), frame_subfolder))
   
   num_frames = len([name for name in os.listdir(frame_subfolder) if os.path.isfile(os.path.join(frame_subfolder, name))])
   bounds.append(num_frames)
@@ -49,13 +48,15 @@ for videofile in os.listdir(videos_folder):
   
   keep_frames = []
   
+  # Make output flow directory
+  if not os.path.exists(os.path.join(flow_folder,  subfolder, 'flow')):
+    os.mkdir(os.path.join(flow_folder,   subfolder, 'flow'))
+  
   # Loop over all scenes
   for i in range(1, len(bounds)):
     diffs = []
-    print(bounds)
     # Loop over all frames in that scene
     for j in range(bounds[i-1], bounds[i]-n_frames, n_frames):
-      print(j)
       first_frame = imread( os.path.join(frames_folder, subfolder, "frame_%04d.png" % j ) )
       last_frame = imread( os.path.join(frames_folder, subfolder, "frame_%04d.png" % (j + n_frames) ) )
       diff = (first_frame - last_frame).sum()

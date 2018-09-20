@@ -22,7 +22,7 @@ for D in `find $folder -type d`
 do
   folderName=$D/flow
   echo $folderName
-  for i in $(seq 1 3000)
+  for i in $(seq 1 30000)
   do
     j=$[ $i - 1 ]
     id=$(printf "%04d" $i)

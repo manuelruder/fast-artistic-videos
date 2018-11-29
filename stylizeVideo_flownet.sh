@@ -98,5 +98,4 @@ th fast_artistic_video.lua \
 
 
 # Create video from output images.
-$FFMPEG -i ${filename}/out-%05d.png ${filename}-stylized.mp4
-# $FFMPEG -i ${filename}/out-%05d.png ${filename}-stylized.$extension
+$FFMPEG -i ${filename}/out-%05d.png ${filename}-stylized.$extension

@@ -64,12 +64,15 @@ read -p "Please enter a resolution at which the video should be processed, \
 in the format w:h, or leave blank to use the original resolution. \
 If you run out of memory, reduce the resolution. $cr > " resolution
 
+# convert to pngs because of an issue with ffmpeg converting video to ppm
+$FFMPEG -i $1 ${filename}/orig_%05d.png
+
 # Save frames of the video as individual image files
 if [ -z $resolution ]; then
-  $FFMPEG -i $1 ${filename}/frame_%05d.ppm
+  $FFMPEG -i ${filename}/orig_%05d.png ${filename}/frame_%05d.ppm
   resolution=default
 else
-  $FFMPEG -i $1 -vf scale=$resolution ${filename}/frame_%05d.ppm
+  $FFMPEG -i ${filename}/orig_%05d.png -vf scale=$resolution ${filename}/frame_%05d.ppm
 fi
 
 echo ""
@@ -95,4 +98,5 @@ th fast_artistic_video.lua \
 
 
 # Create video from output images.
-$FFMPEG -i ${filename}/out-%05d.png ${filename}-stylized.$extension
+$FFMPEG -i ${filename}/out-%05d.png ${filename}-stylized.mp4
+# $FFMPEG -i ${filename}/out-%05d.png ${filename}-stylized.$extension

@@ -195,12 +195,18 @@ function DataLoader_video_fake:getBatch(split, mode, num, dtype)
 
     local rnd = math.random()
 
+    -- We need to create warp maps that take a normal image and create something like a perspective transformed
+    -- image border you would get if you transform the borders of cube map projections from one side to the other.
+    -- We do this for all four sides of an image.
     local map_first, map_second = nil, nil
     local crop_net = nil
     if rnd < 0.25 then
-      if self.map_first_left == nil or self.map_first_left:size(1) ~= b then self.map_first_left = addBatchDim(vr.make_triangle_warp_map_left(images:size(3), 70, images:size(4), 0):type(dtype), b):contiguous() end
+      if self.map_first_left == nil or self.map_first_left:size(1) ~= b then
+        self.map_first_left = addBatchDim(vr.make_perspective_warp_map_left(images:size(3), 70, images:size(4), 0):type(dtype), b):contiguous()
+      end
       if self.map_second_left == nil or self.map_second_left:size(1) ~= b  then
-        self.map_second_left = vr.make_triangle_warp_map_right(h, 64, w, 0, 0):type(dtype)
+        self.map_second_left = vr.make_perspective_warp_map_right(h, 64, w, 0, 0):type(dtype)
+        -- Morror the projection to be on the correct side
         self.map_second_left[2]:add(-w+64)
         self.map_second_left = addBatchDim(self.map_second_left, b):contiguous()
       end
@@ -208,15 +214,22 @@ function DataLoader_video_fake:getBatch(split, mode, num, dtype)
       map_second = self.map_second_left
       crop_net = nn.Sequential():add(nn.Narrow(4, images:size(4)-64, 64)):add(nn.Narrow(3, 65, -65)):type(dtype)
     elseif rnd < 0.5 then
-      if self.map_first_right == nil or self.map_first_right:size(1) ~= b then self.map_first_right = addBatchDim(vr.make_triangle_warp_map_right(images:size(3), 70, images:size(4), 0):type(dtype), b):contiguous() end
-      if self.map_second_right == nil or self.map_second_right:size(1) ~= b then self.map_second_right = addBatchDim(vr.make_triangle_warp_map_left(h, 64, w, 0, 0):type(dtype), b):contiguous() end
+      if self.map_first_right == nil or self.map_first_right:size(1) ~= b then
+        self.map_first_right = addBatchDim(vr.make_perspective_warp_map_right(images:size(3), 70, images:size(4), 0):type(dtype), b):contiguous()
+      end
+      if self.map_second_right == nil or self.map_second_right:size(1) ~= b then
+        self.map_second_right = addBatchDim(vr.make_perspective_warp_map_left(h, 64, w, 0, 0):type(dtype), b):contiguous()
+      end
       map_first = self.map_first_right
       map_second = self.map_second_right
       crop_net = nn.Sequential():add(nn.Narrow(4, 1, 64)):add(nn.Narrow(3, 65, -65)):type(dtype)
     elseif rnd < 0.75 then
-      if self.map_first_top == nil or self.map_first_top:size(1) ~= b then self.map_first_top = addBatchDim(vr.make_triangle_warp_map_top(images:size(4), 70, images:size(3), 0):type(dtype), b):contiguous() end
+      if self.map_first_top == nil or self.map_first_top:size(1) ~= b then
+        self.map_first_top = addBatchDim(vr.make_perspective_warp_map_top(images:size(4), 70, images:size(3), 0):type(dtype), b):contiguous()
+      end
       if self.map_second_top == nil or self.map_second_top:size(1) ~= b then
-        self.map_second_top = vr.make_triangle_warp_map_bottom(w, 64, h, 0, 0):type(dtype)
+        self.map_second_top = vr.make_perspective_warp_map_bottom(w, 64, h, 0, 0):type(dtype)
+        -- Morror the projection to be on the correct side
         self.map_second_top[1]:add(-h+64)
         self.map_second_top = addBatchDim(self.map_second_top, b):contiguous()
       end
@@ -224,8 +237,12 @@ function DataLoader_video_fake:getBatch(split, mode, num, dtype)
       map_second = self.map_second_top
       crop_net = nn.Sequential():add(nn.Narrow(3, images:size(3)-64, 64)):add(nn.Narrow(4, 65, -65)):type(dtype)
     else
-      if self.map_first_bottom == nil or self.map_first_bottom:size(1) ~= b then self.map_first_bottom = addBatchDim(vr.make_triangle_warp_map_bottom(images:size(4), 70, images:size(3), 0):type(dtype), b):contiguous() end
-      if self.map_second_bottom == nil or self.map_second_bottom:size(1) ~= b then self.map_second_bottom = addBatchDim(vr.make_triangle_warp_map_top(w, 64, h, 0, 0):type(dtype), b):contiguous() end
+      if self.map_first_bottom == nil or self.map_first_bottom:size(1) ~= b then
+        self.map_first_bottom = addBatchDim(vr.make_perspective_warp_map_bottom(images:size(4), 70, images:size(3), 0):type(dtype), b):contiguous()
+      end
+      if self.map_second_bottom == nil or self.map_second_bottom:size(1) ~= b then
+        self.map_second_bottom = addBatchDim(vr.make_perspective_warp_map_top(w, 64, h, 0, 0):type(dtype), b):contiguous()
+      end
       map_first = self.map_first_bottom
       map_second = self.map_second_bottom
       crop_net = nn.Sequential():add(nn.Narrow(3, 1, 64)):add(nn.Narrow(4, 65, -65)):type(dtype)

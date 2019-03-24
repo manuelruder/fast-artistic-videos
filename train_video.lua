@@ -208,25 +208,13 @@ cmd:option('-backend', 'cuda', 'cuda|opencl')
   if opt.image_model ~= 'self' then
     local ok, finishedCheckpoint = pcall(function() return torch.load(opt.image_model) end)
     if not ok then
-      print('ERROR: Could not load model from ' .. opt.image_model)
+      print('ERROR: Could not load single-image model from ' .. opt.image_model)
       return
     end
     finishedModel = finishedCheckpoint.model
     finishedModel:evaluate()
     finishedModel:type(dtype)
     if use_cudnn then cudnn.convert(finishedModel, cudnn) end
-  end
-
-  local function shave_y(x, y, out)
-    if opt.padding_type == 'none' then
-      local H, W = x:size(3), x:size(4)
-      local HH, WW = out:size(3), out:size(4)
-      local xs = (H - HH) / 2
-      local ys = (W - WW) / 2
-      return y[{{}, {}, {xs + 1, H - xs}, {ys + 1, W - ys}}]
-    else
-      return y
-    end
   end
   
   local iteration = 0
@@ -289,7 +277,8 @@ cmd:option('-backend', 'cuda', 'cuda|opencl')
     if current_data_source == 'single_image' then
       out1 = torch.zeros(b, c, h, w):type(dtype)
     elseif finishedModel == nil then
-      local input_tmp = torch.cat(imgsList[1], torch.zeros(b, c+1, h, w):type(dtype), 2)      
+      -- TODO: Crashes if using reflection padding and the very first model input is a VR image
+      local input_tmp = torch.cat(imgsList[1], torch.zeros(b, c+1, imgsList[1]:size(3), imgsList[1]:size(4)):type(dtype), 2)     
       out1 = model:forward(input_tmp)
     else
       out1 = finishedModel:forward(imgsList[1])

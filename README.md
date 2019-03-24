@@ -51,7 +51,7 @@ If you find this code useful for your research, please cite
 
 ## Setup
 
-*Note: I got a lot of reports recently that this implementation produces erroneous results. Similar issues exist for fast-neural-style where users reported that using newer torch / CUDA versions were the cause for this. Some were able to fix this by [downgrading torch](https://github.com/jcjohnson/fast-neural-style/issues/153#issuecomment-373625993), others by [downgrading CUDA](https://github.com/jcjohnson/fast-neural-style/issues/137#issuecomment-334979780). The exact reason is still unknown. Unfortunately, I do not have the time to constantly update all my previous, already finished projects because certain software developers feel that a breaking change is necessary in their software (or don't care about backward compatibility in the first place). If anyone knows a fix, let me know. Contributions are also welcome.*
+*Note: I got a lot of reports recently that this implementation produces erroneous results. Similar issues exist for fast-neural-style where users reported that using newer torch / CUDA versions were the cause for this. Furthermore, torch is now abandoned and incompatible with most recent software environments. I have collected possible workarounds at the bottom of this chapter.*
 
 First [install Torch](http://torch.ch/docs/getting-started.html#installing-torch), then
 update / install the following packages:
@@ -61,6 +61,7 @@ luarocks install torch
 luarocks install nn
 luarocks install image
 luarocks install lua-cjson
+luarocks install hdf5
 ```
 
 ### (Optional) GPU Acceleration
@@ -96,6 +97,16 @@ libraries to `/usr/local/cuda/lib64/`. Then install the Torch bindings for cuDNN
 ```bash
 luarocks install cudnn
 ```
+
+### Workarounds for installing with recent Ubuntu / CUDA / cuDNN version
+
+Some were able to fix erroneous results by [downgrading torch](https://github.com/jcjohnson/fast-neural-style/issues/153#issuecomment-373625993), others by [downgrading CUDA](https://github.com/jcjohnson/fast-neural-style/issues/137#issuecomment-334979780).
+
+But what worked for me and also fixes some incompatibilities (Ubuntu 18.04, CUDA10, cuDNN7) was [this fix](https://github.com/manuelruder/fast-artistic-videos/issues/7#issuecomment-444346680).
+
+Also for CUDA10, you need [this fix](https://github.com/torch/cutorch/issues/834#issuecomment-428767642).
+
+And for Ubuntu 18.04 in order to install and use hdf5, you need [this fix](https://github.com/deepmind/torch-hdf5/issues/76#issuecomment-357379520).
 
 ### Optical flow estimator
 

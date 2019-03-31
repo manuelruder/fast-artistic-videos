@@ -463,7 +463,7 @@ cmd:option('-backend', 'cuda', 'cuda|opencl')
           if current_data_source == 'single_image' then
             out1 = torch.zeros(b, c, h, w):type(dtype)
           elseif finishedModel == nil then
-            local input_tmp = torch.cat(imgsList[1], torch.zeros(b, c+1, h, w):type(dtype), 2)      
+            local input_tmp = torch.cat(imgsList[1], torch.zeros(b, c+1, imgsList[1]:size(3), imgsList[1]:size(4)):type(dtype), 2)      
             out1 = model:forward(input_tmp)
           else
             out1 = finishedModel:forward(imgsList[1])

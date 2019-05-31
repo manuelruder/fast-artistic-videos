@@ -106,6 +106,8 @@ But what worked for me and also fixes some incompatibilities (Ubuntu 18.04, CUDA
 
 Also for CUDA10, you need [this fix](https://github.com/torch/cutorch/issues/834#issuecomment-428767642).
 
+For `luarocks install cutorch` error, you need [this fix](https://github.com/torch/cutorch/issues/834#issuecomment-437768401).
+
 And for Ubuntu 18.04 in order to install and use hdf5, you need [this fix](https://github.com/deepmind/torch-hdf5/issues/76#issuecomment-357379520).
 
 ### Optical flow estimator

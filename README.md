@@ -51,7 +51,7 @@ If you find this code useful for your research, please cite
 
 ## Setup
 
-*Note: I got a lot of reports recently that this implementation produces erroneous results. Similar issues exist for fast-neural-style where users reported that using newer torch / CUDA versions were the cause for this. Furthermore, torch is now abandoned and incompatible with most recent software environments. I have collected possible workarounds at the bottom of this chapter.*
+*Disclaimer: Please note that this repository is no longer actively developed. Furthermore, the framework it uses, torch, is not maintained anymore and probably incompatible with most recent software environments. I have collected possible workarounds at the bottom of this chapter, however, there is neither a guarantee that this will work nor will there be any support from my side to get this code to run on recent environments.*
 
 First [install Torch](http://torch.ch/docs/getting-started.html#installing-torch), then
 update / install the following packages:

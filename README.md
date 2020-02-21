@@ -104,6 +104,8 @@ Some were able to fix erroneous results by [downgrading torch](https://github.co
 
 But what worked for me and also fixes some incompatibilities (Ubuntu 18.04, CUDA10, cuDNN7) was [this fix](https://github.com/manuelruder/fast-artistic-videos/issues/7#issuecomment-444346680).
 
+Build Torch in CUDA10.0, the easiest solution would be [this link](https://github.com/nagadomi/waifu2x/issues/253#issuecomment-445448928).
+
 Also for CUDA10, you need [this fix](https://github.com/torch/cutorch/issues/834#issuecomment-428767642).
 
 And for Ubuntu 18.04 in order to install and use hdf5, you need [this fix](https://github.com/deepmind/torch-hdf5/issues/76#issuecomment-357379520).
